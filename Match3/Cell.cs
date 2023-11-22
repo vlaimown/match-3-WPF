@@ -25,9 +25,9 @@ namespace Match3
             shape.Width = size.Width;
             shape.Height = size.Heigth;
             shape.Margin = new System.Windows.Thickness(this.point.X + (numInRow * size.Width + numInRow * size.Width), this.point.Y + (numInColumn * size.Heigth + numInColumn * size.Heigth), 0, 0);
-            shape.Fill = System.Windows.Media.Brushes.Black;
+            shape.Fill = System.Windows.Media.Brushes.White;
             shape.Stroke = System.Windows.Media.Brushes.Red;
-            shape.StrokeThickness = 1.5;
+            shape.StrokeThickness = 2;
         }
 
         public System.Windows.Shapes.Rectangle Shape

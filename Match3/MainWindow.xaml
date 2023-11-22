@@ -12,11 +12,10 @@
                 HorizontalAlignment="Center" 
                 Width="100px" 
                 Height="25px" 
-                Margin="0,187,0,0" 
-                VerticalAlignment="Top"
+                VerticalAlignment="Center"
                 Cursor="Hand"
                 Click="PlayButton_Click"/>
-        <TextBlock Name="Time"  TextWrapping="Wrap" Text="TIME: 0" Margin="702,10,0,392" HorizontalAlignment="Left" Width="88"/>
-        <TextBlock Name="Score" TextWrapping="Wrap" Text="SCORE: 0" Margin="702,47,0,355" HorizontalAlignment="Left" Width="88"/>
+        <TextBlock Name="Time"  TextWrapping="Wrap" Text="TIME: 60" Margin="28,20,684,382"/>
+        <TextBlock Name="Score" TextWrapping="Wrap" Text="SCORE: 0" Margin="28,57,0,345" HorizontalAlignment="Left" Width="88"/>
     </Grid>
 </Window>

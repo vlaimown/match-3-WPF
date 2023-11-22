@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Match3
 {
@@ -22,12 +23,16 @@ namespace Match3
     public partial class MainWindow : Window
     {
         Random random = new Random();
-
+        private int decrement = 4;
+        private int time = 4;
+        DispatcherTimer dt = new DispatcherTimer();
+        Field field = new Field(new Cell[8, 8]);
         public MainWindow()
         {
             InitializeComponent();
             Time.Visibility = System.Windows.Visibility.Hidden;
             Score.Visibility = System.Windows.Visibility.Hidden;
+
             //Polygon polygon = new Polygon();
             //polygon.Points = new PointCollection() { new System.Windows.Point(400, 400), new System.Windows.Point(200, 200), new System.Windows.Point(400, 0), new System.Windows.Point(600, 200) };
             //shape.Width = cell.Size.Width / coef;
@@ -39,11 +44,55 @@ namespace Match3
             //RootGrid.Children.Add(polygon);
         }
 
+        private void Timer_Start()
+        {
+            if (dt == null)
+                dt = new DispatcherTimer();
+
+            dt.Interval = TimeSpan.FromSeconds(1);
+            dt.Tick += dtTicker;
+            dt.Start();
+        }
+
+        private void dtTicker(object sender, EventArgs e)
+        {
+            if (decrement > 0)
+            {
+                decrement--;
+                Time.Text = $"TIME: {decrement}";
+            }
+            else
+            {
+
+                dt.Stop();
+                dt = null;
+                if (MessageBox.Show("Game Over", "", MessageBoxButton.OK, MessageBoxImage.Question) == MessageBoxResult.OK)
+                {
+                    for (int i = 0; i < field.GameField.GetLength(0); i++)
+                    {
+                        for (int j = 0; j < field.GameField.GetLength(1); j++)
+                        {
+                            PlayButton.Visibility = System.Windows.Visibility.Visible;
+
+                            Time.Visibility = System.Windows.Visibility.Hidden;
+                            Score.Visibility = System.Windows.Visibility.Hidden;
+
+                            RootGrid.Children.Remove(field.GameField[i,j].Shape);
+                            RootGrid.Children.Remove(field.GameField[i,j].Item.Shape);
+                        }
+                    }
+                }
+            }
+        }
+
         private void PlayButton_Click(object sender, RoutedEventArgs e)
         {
-            Field field = new Field(new Cell[4, 4]);
+            Time.Text = $"TIME: {time}";
+            decrement = time;
+            Timer_Start();
 
             PlayButton.Visibility = System.Windows.Visibility.Hidden;
+
             Time.Visibility = System.Windows.Visibility.Visible;
             Score.Visibility = System.Windows.Visibility.Visible;
 
@@ -51,12 +100,11 @@ namespace Match3
             {
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
                 {
-                    Point point = new Point(-750, 250);
+                    Point point = new Point(-1000, -500);
                     Size size = new Size(50, 50);
                     Cell cell = new Cell(point, size, new Rectangle(), i, j);
                     field.GameField[i, j] = cell;
                     RootGrid.Children.Add(cell.Shape);
-                    //d.Text += $"{field.GameField[i, j].Size.Width} ";
                 }
             }
 
@@ -66,14 +114,17 @@ namespace Match3
                 {
                     Cube cube = new Cube(i, j, 2, 2, field.GameField[i, j]);
                     Circle circle = new Circle(2, 2, field.GameField[i, j], i, j);
-                    Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
+                    Figure2 figure2 = new Figure2(2, 2, field.GameField[i, j], i, j);
+                    Figure3 figure3 = new Figure3(2, 2, field.GameField[i, j], i, j);
+                    Figure_4 figure4 = new Figure_4(2, 2, field.GameField[i, j], i, j);
+                    //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
-                    Item[] arr = { cube, circle, rhomb/*, pentagon, rhomb, triangle*/ };
+                    Item[] arr = { cube, circle, figure2, figure3, figure4/*, pentagon, rhomb, triangle*/ };
                     Item item = arr[random.Next(0, arr.Length)];
 
                     field.GameField[i, j].Item = item;
 
-                    RootGrid.Children.Add(rhomb.Shape);
+                    RootGrid.Children.Add(item.Shape);
                 }
             }
         }
