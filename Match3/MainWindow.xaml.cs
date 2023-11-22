@@ -4,15 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace Match3
@@ -24,7 +17,7 @@ namespace Match3
     {
         Random random = new Random();
         private int decrement = 4;
-        private int time = 4;
+        private int time = 6000;
         DispatcherTimer dt = new DispatcherTimer();
         Field field = new Field(new Cell[8, 8]);
         public MainWindow()
@@ -63,7 +56,6 @@ namespace Match3
             }
             else
             {
-
                 dt.Stop();
                 dt = null;
                 if (MessageBox.Show("Game Over", "", MessageBoxButton.OK, MessageBoxImage.Question) == MessageBoxResult.OK)
@@ -77,7 +69,7 @@ namespace Match3
                             Time.Visibility = System.Windows.Visibility.Hidden;
                             Score.Visibility = System.Windows.Visibility.Hidden;
 
-                            RootGrid.Children.Remove(field.GameField[i,j].Shape);
+                            RootGrid.Children.Remove(field.GameField[i,j].Button);
                             RootGrid.Children.Remove(field.GameField[i,j].Item.Shape);
                         }
                     }
@@ -102,9 +94,14 @@ namespace Match3
                 {
                     Point point = new Point(-1000, -500);
                     Size size = new Size(50, 50);
-                    Cell cell = new Cell(point, size, new Rectangle(), i, j);
+                    Button button = new Button();
+                    button.Foreground = System.Windows.Media.Brushes.Black;
+                    button.Click += new RoutedEventHandler(TestButton_Click);
+
+                    Cell cell = new Cell(button, point, size, /*new Rectangle(),*/ i, j);
                     field.GameField[i, j] = cell;
-                    RootGrid.Children.Add(cell.Shape);
+                    //field.GameFieldButtons[i,j] = button;
+                    RootGrid.Children.Add(field.GameField[i, j].Button);
                 }
             }
 
@@ -127,6 +124,26 @@ namespace Match3
                     RootGrid.Children.Add(item.Shape);
                 }
             }
+        }
+
+        private void TestButton_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = e.Source as Button;
+            Cell curCell = null;
+
+            for (int i = 0; i < field.GameField.GetLength(0); i++)
+            {
+                for (int j = 0; j < field.GameField.GetLength(1); j++)
+                {
+                    if (field.GameField[i,j].Button == btn)
+                    {
+                        curCell = field.GameField[i,j];
+                        break;
+                    }
+                }
+            }
+
+            txt.Text = ($"{curCell.Item.Shape.GetType()}");
         }
     }
 }
