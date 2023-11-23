@@ -22,15 +22,15 @@ namespace Match3
         private int colNum;
         //private System.Windows.Shapes.Rectangle shape;
 
-        public Cell(Button button, Point point, Size size, /*System.Windows.Shapes.Rectangle rectangle,*/ int numInColumn, int numInRow)
+        public Cell(int numRow, int numColumn, Button button, Point point, Size size/*System.Windows.Shapes.Rectangle rectangle,*/)
         {
+            this.rowNum = numRow;
+            this.colNum = numColumn;
+
             this.btn = button;
             //this.shape = rectangle;
             this.point = point;
             this.size = size;
-
-            this.rowNum = numInRow;
-            this.colNum = numInColumn;
 
             btn.Width = size.Width;
             btn.Height = size.Heigth;
@@ -75,7 +75,15 @@ namespace Match3
 
         public Button Button { get { return btn; } set { btn = value; } }
 
-        public int RowNum { get { return rowNum; } set { rowNum = value; } }
-        public int ColNum { get { return colNum; } set { colNum = value; } }
+        public int RowNum 
+        { 
+            get { return rowNum; } 
+            set { rowNum = value; } 
+        }
+        public int ColNum 
+        { 
+            get { return colNum; } 
+            set { colNum = value; } 
+        }
     }
 }

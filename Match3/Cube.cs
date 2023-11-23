@@ -10,10 +10,10 @@ namespace Match3
 {
     public class Cube : Item
     {
-        public Cube(int numInColumn, int numInRow, int value, int coef, Cell cell) : base(numInColumn, numInRow, value, coef, cell) 
+        public Cube(/*int numInRow, int numInColumn,*/ int value, int coef, Cell cell) : base(/*numInRow, numInColumn,*/ value, coef, cell) 
         {
-            base.numInColumn = numInColumn;
-            base.numInRow = numInRow;
+            //base.numInRow = numInRow;
+            //base.numInColumn = numInColumn;
 
             base.value = value;
             base.shape = new Rectangle();
