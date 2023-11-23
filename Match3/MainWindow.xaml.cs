@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using System.Windows.Shapes;
 
 namespace Match3
 {
@@ -16,25 +17,22 @@ namespace Match3
     public partial class MainWindow : Window
     {
         Random random = new Random();
+
         private int decrement = 4;
         private int time = 6000;
         DispatcherTimer dt = new DispatcherTimer();
+
         Field field = new Field(new Cell[8, 8]);
+
+        Cell selectedCell1 = null;
+        Cell selectedCell2 = null;
+
+        int selectedCount = 0;
         public MainWindow()
         {
             InitializeComponent();
             Time.Visibility = System.Windows.Visibility.Hidden;
             Score.Visibility = System.Windows.Visibility.Hidden;
-
-            //Polygon polygon = new Polygon();
-            //polygon.Points = new PointCollection() { new System.Windows.Point(400, 400), new System.Windows.Point(200, 200), new System.Windows.Point(400, 0), new System.Windows.Point(600, 200) };
-            //shape.Width = cell.Size.Width / coef;
-            //shape.Height = cell.Size.Heigth / coef;
-            //shape.Margin = new System.Windows.Thickness(cell.Point.X + (numInRow * cell.Size.Width + numInRow * cell.Size.Width), cell.Point.Y + (numInColumn * cell.Size.Heigth + numInColumn * cell.Size.Heigth), 0, 0);
-            //polygon.Fill = System.Windows.Media.Brushes.Red;
-            //shape.Stroke = System.Windows.Media.Brushes.Black;
-            //shape.StrokeThickness = 2;
-            //RootGrid.Children.Add(polygon);
         }
 
         private void Timer_Start()
@@ -92,15 +90,20 @@ namespace Match3
             {
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
                 {
-                    Point point = new Point(-1000, -500);
-                    Size size = new Size(50, 50);
+                    Point point = new Point(100, 100);
+                    Size size = new Size(25, 25);
                     Button button = new Button();
                     button.Foreground = System.Windows.Media.Brushes.Black;
                     button.Click += new RoutedEventHandler(TestButton_Click);
 
                     Cell cell = new Cell(button, point, size, /*new Rectangle(),*/ i, j);
                     field.GameField[i, j] = cell;
-                    //field.GameFieldButtons[i,j] = button;
+
+                    int posX = cell.Point.X + (cell.RowNum * cell.Size.Width);
+                    int posY = cell.Point.Y + (cell.ColNum * cell.Size.Heigth);
+                    Canvas.SetLeft(cell.Button, posX);
+                    Canvas.SetTop(cell.Button, posY);
+
                     RootGrid.Children.Add(field.GameField[i, j].Button);
                 }
             }
@@ -110,16 +113,22 @@ namespace Match3
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
                 {
                     Cube cube = new Cube(i, j, 2, 2, field.GameField[i, j]);
-                    Circle circle = new Circle(2, 2, field.GameField[i, j], i, j);
-                    Figure2 figure2 = new Figure2(2, 2, field.GameField[i, j], i, j);
-                    Figure3 figure3 = new Figure3(2, 2, field.GameField[i, j], i, j);
-                    Figure_4 figure4 = new Figure_4(2, 2, field.GameField[i, j], i, j);
+                    Circle circle = new Circle(i, j, 2, 2, field.GameField[i, j]);
+                    Figure2 figure2 = new Figure2(i, j, 2, 2, field.GameField[i, j]);
+                    Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
+                    Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);
                     //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
                     Item[] arr = { cube, circle, figure2, figure3, figure4/*, pentagon, rhomb, triangle*/ };
                     Item item = arr[random.Next(0, arr.Length)];
 
                     field.GameField[i, j].Item = item;
+
+                    int posX = field.GameField[i, j].Point.X + (field.GameField[i, j].RowNum * field.GameField[i, j].Size.Width);
+                    int posY = field.GameField[i, j].Point.Y + (field.GameField[i, j].ColNum * field.GameField[i, j].Size.Heigth);
+
+                    Canvas.SetLeft(item.Shape, posX);
+                    Canvas.SetTop(item.Shape, posY);
 
                     RootGrid.Children.Add(item.Shape);
                 }
@@ -131,19 +140,113 @@ namespace Match3
             var btn = e.Source as Button;
             Cell curCell = null;
 
+            int rowNum = 0;
+            int colNum = 0;
+
             for (int i = 0; i < field.GameField.GetLength(0); i++)
             {
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
                 {
                     if (field.GameField[i,j].Button == btn)
                     {
+                        colNum = i;
+                        rowNum = j;
                         curCell = field.GameField[i,j];
                         break;
                     }
                 }
             }
 
-            txt.Text = ($"{curCell.Item.Shape.GetType()}");
+            if (selectedCount == 0)
+            {
+                selectedCell1 = curCell;
+                selectedCount = 1;
+                txt.Text = selectedCount.ToString();
+            }
+            else if (selectedCount == 1)
+            {
+                if (curCell.ColNum == selectedCell1.ColNum - 1 && curCell.RowNum == selectedCell1.RowNum ||
+                    curCell.ColNum == selectedCell1.ColNum + 1 && curCell.RowNum == selectedCell1.RowNum ||
+                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum + 1 ||
+                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum - 1)
+                {
+                    selectedCell2 = curCell;
+                    selectedCount = 2;
+                    txt.Text = selectedCount.ToString();
+                }
+                else
+                {
+                    selectedCount = 0;
+                    selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+                    selectedCell1 = null;
+                    curCell.Button.Background = System.Windows.Media.Brushes.White;
+                }
+
+                if (selectedCell1 == curCell)
+                {
+                    selectedCount = 0;
+                    selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+                    selectedCell1 = null;
+                    curCell.Button.Background = System.Windows.Media.Brushes.White;
+                }
+            }
+
+            if (selectedCount == 1)
+            {
+                curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
+                txt.Text = selectedCount.ToString();
+            }
+
+            if (selectedCount == 2)
+            {
+                curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
+                txt.Text = selectedCount.ToString();
+
+                var tmp1 = selectedCell1;
+                var tmp2 = selectedCell2;
+
+
+                var tmp = selectedCell1.Item;
+                selectedCell1.Item = selectedCell2.Item;
+                selectedCell2.Item = tmp;
+
+                RootGrid.Children.Remove(tmp1.Item.Shape);
+                RootGrid.Children.Remove(tmp2.Item.Shape);
+
+                selectedCount = 0;
+                txt.Text = $"первый элемент - {selectedCell1.Item.Shape}, второй - {selectedCell2.Item.Shape}";
+
+                int posX = selectedCell1.Point.X + (selectedCell1.RowNum * selectedCell1.Size.Width);
+                int posY = selectedCell1.Point.Y + (selectedCell1.ColNum * selectedCell1.Size.Heigth);
+
+                Canvas.SetLeft(selectedCell1.Item.Shape, posX);
+                Canvas.SetTop(selectedCell1.Item.Shape, posY);
+
+                RootGrid.Children.Add(selectedCell1.Item.Shape);
+
+                posX = selectedCell2.Point.X + (selectedCell2.RowNum * selectedCell2.Size.Width);
+                posY = selectedCell2.Point.Y + (selectedCell2.ColNum * selectedCell2.Size.Heigth);
+
+                Canvas.SetLeft(selectedCell2.Item.Shape, posX);
+                Canvas.SetTop(selectedCell2.Item.Shape, posY);
+
+                RootGrid.Children.Add(selectedCell2.Item.Shape);
+
+                selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+                selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
+            }
+        }
+
+
+
+        private void TestButton_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SwitchElements()
+        {
+
         }
     }
 }

@@ -21,20 +21,36 @@ namespace Match3
 
         protected int coef;
 
+        protected int numInColumn;
+        protected int numInRow;
+
         //Rectangle rectangle = new Rectangle();
         //DrawingVisual drawingVisual = new DrawingVisual();
         //protected Image image;
 
         protected int value;
 
-        public Item(int value, int coef, Cell cell, Shape shape = null) 
+        public Item(int numInColumn, int numInRow, int value, int coef, Cell cell, Shape shape = null) 
         {
+            this.numInColumn = numInColumn;
+            this.numInRow = numInRow;
             this.value = value;
             this.coef = coef;
             this.shape = shape;
             this.cell = cell;
         }
+        public int NumInColumn
+        {
+            get { return numInColumn; }
+            set { numInColumn = value; }
+        }
 
-        public Shape Shape { get { return shape; } }
+        public int NumInRow
+        {
+            get { return numInRow; }
+            set { numInRow = value; }
+        }
+        public Cell Cell { get { return cell; } set { cell = value; } }
+        public Shape Shape { get { return shape; } set { shape = value; } }
     }
 }

@@ -17,6 +17,9 @@ namespace Match3
         private Size size;
         private Item item;
         private Button btn;
+
+        private int rowNum;
+        private int colNum;
         //private System.Windows.Shapes.Rectangle shape;
 
         public Cell(Button button, Point point, Size size, /*System.Windows.Shapes.Rectangle rectangle,*/ int numInColumn, int numInRow)
@@ -26,13 +29,18 @@ namespace Match3
             this.point = point;
             this.size = size;
 
-            //btn.Click += new RoutedEventHandler(Select_Item);
+            this.rowNum = numInRow;
+            this.colNum = numInColumn;
 
             btn.Width = size.Width;
             btn.Height = size.Heigth;
-            btn.Margin = new System.Windows.Thickness(this.point.X + (numInRow * size.Width + numInRow * size.Width), this.point.Y + (numInColumn * size.Heigth + numInColumn * size.Heigth), 0, 0);
-            btn.Foreground = System.Windows.Media.Brushes.White;
+            //btn.Margin = new System.Windows.Thickness(this.point.X + (rowNum * size.Width + rowNum * size.Width), this.point.Y + (colNum * size.Heigth + colNum * size.Heigth), 0, 0);
+            //btn.Margin = new System.Windows.Thickness(this.point.X + (rowNum * size.Width), this.point.Y + (colNum * size.Heigth), 0, 0);
+            btn.Background = System.Windows.Media.Brushes.White;
             btn.BorderBrush = System.Windows.Media.Brushes.Red;
+
+            //Canvas.SetLeft(btn, this.point.X);
+            //Canvas.SetTop(btn, this.point.Y);
 
             //shape.Width = size.Width;
             //shape.Height = size.Heigth;
@@ -50,11 +58,13 @@ namespace Match3
         public Size Size
         {
             get { return size; }
+            set { size = value; }
         }
 
         public Point Point
         {
             get { return point; }
+            set { point = value; }
         }
 
         public Item Item
@@ -63,6 +73,9 @@ namespace Match3
             set { item = value; }
         }
 
-        public Button Button { get { return btn; } }
+        public Button Button { get { return btn; } set { btn = value; } }
+
+        public int RowNum { get { return rowNum; } set { rowNum = value; } }
+        public int ColNum { get { return colNum; } set { colNum = value; } }
     }
 }

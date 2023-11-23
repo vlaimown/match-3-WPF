@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Match3"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid Name="RootGrid">
+    <Canvas Name="RootGrid">
         <Button x:Name="PlayButton" 
                 Content="Play" 
                 HorizontalAlignment="Center" 
@@ -25,6 +25,6 @@
                 Height="25px" 
                 VerticalAlignment="Top"
                 Cursor="Hand"
-                Click="TestButton_Click" Margin="509,121,0,0"/>
-    </Grid>
+                Click="TestButton_Click" Background="Aqua" Margin="509,121,0,0"/>
+    </Canvas>
 </Window>
