@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace Match3
 {
@@ -195,7 +196,7 @@ namespace Match3
             if (selectedCount == 1)
             {
                 curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
-                txt.Text = selectedCount.ToString();
+                txt.Text = $"{curCell.Item}";
             }
 
             if (selectedCount == 2)
@@ -216,7 +217,6 @@ namespace Match3
                 RootGrid.Children.Remove(tmp2.Item.Shape);
 
                 selectedCount = 0;
-                txt.Text = $"первый элемент - {selectedCell1.Item.GetType()}, второй - {selectedCell2.Item.GetType()}";
 
                 point = SetPointCell(selectedCell1);
 
@@ -244,8 +244,6 @@ namespace Match3
 
                 rowNum = selectedCell2.RowNum;
                 colNum = selectedCell2.ColNum;
-
-                txt.Text = $"X - {directionX} Y - {directionY}";
 
                 if (directionX == 0)
                 {
@@ -318,9 +316,11 @@ namespace Match3
                     {
                         RootGrid.Children.Remove(item.Shape);
                         score.Value += item.Value;
-                        matchedItems.Remove(item);
+                        //matchedItems.Remove(item);
                         item.Cell.Item = null;
                     }
+
+                    selectedCell2.Item = null;
                     Score.Text = $"Score: {score.Value}";
                 }
             }
