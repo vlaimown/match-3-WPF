@@ -52,5 +52,6 @@ namespace Match3
         //}
         public Cell Cell { get { return cell; } set { cell = value; } }
         public Shape Shape { get { return shape; } set { shape = value; } }
+        public int Value { get { return value; } }
     }
 }

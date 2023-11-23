@@ -32,6 +32,8 @@ namespace Match3
 
         private int rowNum = 0;
         private int colNum = 0;
+
+        private Score score = new Score();
         public MainWindow()
         {
             InitializeComponent();
@@ -311,10 +313,15 @@ namespace Match3
                 if (match >= 2)
                 {
                     matchedItems.Add(selectedCell2.Item);
+
                     foreach (Item item in matchedItems)
                     {
                         RootGrid.Children.Remove(item.Shape);
+                        score.Value += item.Value;
+                        matchedItems.Remove(item);
+                        item.Cell.Item = null;
                     }
+                    Score.Text = $"Score: {score.Value}";
                 }
             }
         }
