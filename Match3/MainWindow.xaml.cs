@@ -238,6 +238,8 @@ namespace Match3
                 int directionX = selectedCell1.ColNum - selectedCell2.ColNum;
                 int directionY = selectedCell1.RowNum - selectedCell2.RowNum;
 
+                List<Item> matchedItems = new List<Item>();
+
                 rowNum = selectedCell2.RowNum;
                 colNum = selectedCell2.ColNum;
 
@@ -245,42 +247,74 @@ namespace Match3
 
                 if (directionX == 0)
                 {
-                    if (directionY == 1) 
+                    if (directionY == 1)
                     {
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+                        {
                             match++;
+                            matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
+                        }
                     }
                     if (directionY == -1)
                     {
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
+                        {
                             match++;
+                            matchedItems.Add(field.GameField[rowNum - 1, colNum].Item);
+                        }
                     }
                     if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
+                    {
                         match++;
+                        matchedItems.Add(field.GameField[rowNum, colNum + 1].Item);
+                    }
                     if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
+                    {
                         match++;
+                        matchedItems.Add(field.GameField[rowNum, colNum - 1].Item);
+                    }
                 }
                 else if (directionY == 0)
                 {
                     if (directionX == 1)
                     {
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
+                        {
                             match++;
+                            matchedItems.Add(field.GameField[rowNum, colNum + 1].Item);
+                        }
                     }
                     if (directionX == -1)
                     {
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
+                        {
                             match++;
+                            matchedItems.Add(field.GameField[rowNum, colNum - 1].Item);
+                        }
                     }
                     if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+                    {
                         match++;
+                        matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
+                    }
                     if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
+                    {
                         match++;
+                        matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
+                    }
                 }
 
+                if (match == 1)
+                {
+
+                }
                 if (match >= 2)
                 {
-                    txt.Text = "ogo!!";
+                    matchedItems.Add(selectedCell2.Item);
+                    foreach (Item item in matchedItems)
+                    {
+                        RootGrid.Children.Remove(item.Shape);
+                    }
                 }
             }
         }
