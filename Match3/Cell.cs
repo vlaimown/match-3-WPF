@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
-
+﻿using System.Windows.Controls;
 namespace Match3
 {
     public class Cell
     {
         private Point point;
         private Size size;
+
         private Item item;
         private Button btn;
 
@@ -49,11 +40,6 @@ namespace Match3
             //shape.Stroke = System.Windows.Media.Brushes.Red;
             //shape.StrokeThickness = 2;
         }
-
-        //public System.Windows.Shapes.Rectangle Shape
-        //{
-        //    get { return shape; }
-        //}
 
         public Size Size
         {
