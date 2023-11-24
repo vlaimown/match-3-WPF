@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Windows.Shapes;
 using System.IO;
+using System.Drawing;
 
 namespace Match3
 {
@@ -220,113 +221,96 @@ namespace Match3
 
                 point = SetPointCell(selectedCell1);
 
-                Canvas.SetLeft(selectedCell1.Item.Shape, point.X);
-                Canvas.SetTop(selectedCell1.Item.Shape, point.Y);
+                SetCanvasPosition(selectedCell1.Item.Shape, point.X, point.Y, selectedCell1.Size.Width / 2, selectedCell1.Size.Heigth / 2);
 
                 RootGrid.Children.Add(selectedCell1.Item.Shape);
 
                 point = SetPointCell(selectedCell2);
 
-                Canvas.SetLeft(selectedCell2.Item.Shape, point.X);
-                Canvas.SetTop(selectedCell2.Item.Shape, point.Y);
+                SetCanvasPosition(selectedCell2.Item.Shape, point.X, point.Y, selectedCell2.Size.Width/2, selectedCell2.Size.Heigth/2);
 
                 RootGrid.Children.Add(selectedCell2.Item.Shape);
 
                 selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
                 selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
 
-                int match = 0;
-
                 int directionX = selectedCell1.ColNum - selectedCell2.ColNum;
                 int directionY = selectedCell1.RowNum - selectedCell2.RowNum;
 
-                List<Item> matchedItems = new List<Item>();
+                List<Item> matchedItems1 = new List<Item>();
+                List<Item> matchedItems2 = new List<Item>();
+                List<Item> matchedItems3 = new List<Item>();
 
                 rowNum = selectedCell2.RowNum;
                 colNum = selectedCell2.ColNum;
 
-                if (directionX == 0)
+                if (matchedItems1.Count == 0 && matchedItems2.Count == 0 && matchedItems3.Count == 0)
                 {
-                    if (directionY == 1)
-                    {
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
-                        {
-                            match++;
-                            matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
-                        }
-                    }
-                    if (directionY == -1)
-                    {
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
-                        {
-                            match++;
-                            matchedItems.Add(field.GameField[rowNum - 1, colNum].Item);
-                        }
-                    }
-                    if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
-                    {
-                        match++;
-                        matchedItems.Add(field.GameField[rowNum, colNum + 1].Item);
-                    }
-                    if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
-                    {
-                        match++;
-                        matchedItems.Add(field.GameField[rowNum, colNum - 1].Item);
-                    }
-                }
-                else if (directionY == 0)
-                {
-                    if (directionX == 1)
+                    if (directionX == 0)
                     {
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
-                        {
-                            match++;
-                            matchedItems.Add(field.GameField[rowNum, colNum + 1].Item);
-                        }
-                    }
-                    if (directionX == -1)
-                    {
+                            FindMatch(0, 1, matchedItems1);
+
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
-                        {
-                            match++;
-                            matchedItems.Add(field.GameField[rowNum, colNum - 1].Item);
-                        }
+                            FindMatch(0, -1, matchedItems2);
                     }
-                    if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+
+                    else if (directionY == 0)
                     {
-                        match++;
-                        matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
-                    }
-                    if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
-                    {
-                        match++;
-                        matchedItems.Add(field.GameField[rowNum + 1, colNum].Item);
+                        if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+                            FindMatch(1, 0, matchedItems1);
+
+                        if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
+                            FindMatch(-1, 0, matchedItems2);
                     }
                 }
 
-                if (match == 1)
-                {
+                txt.Text = $"{matchedItems1.Count + matchedItems2.Count}";
 
-                }
-                if (match >= 2)
-                {
-                    matchedItems.Add(selectedCell2.Item);
+                if (matchedItems1.Count >= 2)
+                    Match(matchedItems1);
 
-                    foreach (Item item in matchedItems)
-                    {
-                        RootGrid.Children.Remove(item.Shape);
-                        score.Value += item.Value;
-                        //matchedItems.Remove(item);
-                        item.Cell.Item = null;
-                    }
+                if (matchedItems2.Count >= 2)
+                    Match(matchedItems2);
 
-                    selectedCell2.Item = null;
-                    Score.Text = $"Score: {score.Value}";
-                }
+                if (matchedItems3.Count >= 2)
+                    Match(matchedItems3);
             }
         }
 
+        private void Match(List<Item> matchedList)
+        {
+            foreach (var item in matchedList)
+            {
+                RootGrid.Children.Remove(item.Shape);
+                score.Value += item.Value;
+                item.Cell.Item = null;
+            }
+            score.Value += selectedCell2.Item.Value;
+            RootGrid.Children.Remove(selectedCell2.Item.Shape);
+            selectedCell2.Item = null;
+            Score.Text = $"Score: {score.Value}";
+        }
 
+        private void FindMatch(int increaseRow, int increaseCol, List<Item> matchedItems)
+        {
+            Item curItem = selectedCell2.Item;
+
+            while (curItem.GetType() == field.GameField[rowNum + increaseRow, colNum + increaseCol].Item.GetType())
+            {
+                matchedItems.Add(field.GameField[rowNum + increaseRow, colNum + increaseCol].Item);
+                curItem = field.GameField[rowNum + increaseRow, colNum + increaseCol].Item;
+
+                if ((rowNum + increaseRow >= 0 && rowNum + increaseRow < field.GameField.GetLength(0)) &&
+                    (colNum + increaseCol >= 0 && colNum + increaseCol < field.GameField.GetLength(1)))
+                {
+                    increaseRow += increaseRow;
+                    increaseCol += increaseCol;
+                }
+                else
+                    break;
+            }
+        }
 
         private void TestButton_Click_1(object sender, RoutedEventArgs e)
         {
@@ -340,6 +324,13 @@ namespace Match3
 
         private void SwitchElementsBack()
         {
+
+        }
+
+        private void SetCanvasPosition(UIElement element, int x, int y, int offsetX = 0, int offsetY = 0)
+        {
+            Canvas.SetLeft(element, 0);
+            Canvas.SetTop(element, 0);
         }
 
         private Point SetPointCell(Cell cell)
