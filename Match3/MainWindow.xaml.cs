@@ -297,23 +297,20 @@ namespace Match3
                 rowNum = selectedCell2.RowNum;
                 colNum = selectedCell2.ColNum;
 
-                //if (directionX != 0) 
-                //{
-                //    if (selectedCell2.Item.GetType() == field.GameField[nextRow + 1, colNum].Item.GetType())
-                //    {
-                //        FindMatch(rowNum, colNum, matchedItems1, 1, 0);
-                //    }
+                if (directionX != 0)
+                {
+                    if (rowNum + 1 < field.GameField.GetLength(0))
+                        if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+                            FindMatch(rowNum, colNum, matchedItems1, 1, 0);
 
-                //    if (selectedCell2.Item.GetType() == field.GameField[prevRow - 1, colNum].Item.GetType())
-                //    {
-                //        FindMatch(rowNum, colNum, matchedItems2, -1, 0);
-                //    }
+                    if (rowNum - 1 < field.GameField.GetLength(0))
+                        if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
+                            FindMatch(rowNum, colNum, matchedItems2, -1, 0);
 
-                //    if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + directionX].Item.GetType())
-                //    {
-                //        FindMatch(rowNum, colNum, matchedItems3, 0, directionX);
-                //    }
-                //}
+                    if (colNum + directionX < field.GameField.GetLength(0))
+                        if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + directionX].Item.GetType())
+                            FindMatch(rowNum, colNum, matchedItems3, 0, directionX);
+                }
                 if (directionY != 0)
                 {
                     if (colNum + 1 < field.GameField.GetLength(1))
@@ -331,35 +328,32 @@ namespace Match3
 
                 txt.Text = $"{matchedItems1.Count + matchedItems2.Count + matchedItems3.Count}";
 
-                //if (matchedItems1.Count >= 2)
-                //    Match(matchedItems1);
+                if (matchedItems1.Count >= 2)
+                    Match(matchedItems1);
 
-                //if (matchedItems2.Count >= 2)
-                //    Match(matchedItems2);
+                else if (matchedItems2.Count >= 2)
+                    Match(matchedItems2);
 
-                //if (matchedItems3.Count >= 2)
-                //    Match(matchedItems3);
+                else if (matchedItems3.Count >= 2)
+                    Match(matchedItems3);
 
-                //        if (matchedItems1.Count == 0 && matchedItems2.Count == 0 && matchedItems3.Count == 0)
-                //        {
-                //            if (directionX == 0)
-                //            {
-                //                if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
-                //                    FindMatch(0, 1, matchedItems1);
+                else if (matchedItems1.Count + matchedItems2.Count >= 2)
+                {
+                    Match(matchedItems1);
+                    Match(matchedItems2);
+                }
 
-                //                if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
-                //                    FindMatch(0, -1, matchedItems2);
-                //            }
+                else if (matchedItems1.Count + matchedItems3.Count >= 2)
+                {
+                    Match(matchedItems1);
+                    Match(matchedItems3);
+                }
 
-                //            else if (directionY == 0)
-                //            {
-                //                if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
-                //                    FindMatch(1, 0, matchedItems1);
-
-                //                if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
-                //                    FindMatch(-1, 0, matchedItems2);
-                //            }
-                //        }
+                else if (matchedItems2.Count + matchedItems3.Count >= 2)
+                {
+                    Match(matchedItems2);
+                    Match(matchedItems3);
+                }
             }
         }
 
@@ -371,9 +365,14 @@ namespace Match3
                 score.Value += item.Value;
                 item.Cell.Item = null;
             }
-            score.Value += selectedCell2.Item.Value;
-            RootGrid.Children.Remove(selectedCell2.Item.Shape);
-            selectedCell2.Item = null;
+
+            if (selectedCell2.Item != null)
+            {
+                score.Value += selectedCell2.Item.Value;
+                RootGrid.Children.Remove(selectedCell2.Item.Shape);
+                selectedCell2.Item = null;
+            }
+
             Score.Text = $"Score: {score.Value}";
         }
 
@@ -385,20 +384,21 @@ namespace Match3
             col += increaseCol;
 
             if (row >= 0 && col >= 0 && row < field.GameField.GetLength(0) && col < field.GameField.GetLength(1))
-
-            while (curItem.GetType() == field.GameField[row, col].Item.GetType())
             {
-                matchedItems.Add(field.GameField[row, col].Item);
-                curItem = field.GameField[row, col].Item;
-
-                if ((row + increaseRow >= 0 && row + increaseRow < field.GameField.GetLength(0)) &&
-                    (row + increaseCol >= 0 && col + increaseCol < field.GameField.GetLength(1)))
+                while (curItem.GetType() == field.GameField[row, col].Item.GetType())
                 {
-                    row += increaseRow;
-                    col += increaseCol;
+                    matchedItems.Add(field.GameField[row, col].Item);
+                    curItem = field.GameField[row, col].Item;
+
+                    if ((row + increaseRow >= 0 && row + increaseRow < field.GameField.GetLength(0)) &&
+                        (row + increaseCol >= 0 && col + increaseCol < field.GameField.GetLength(1)))
+                    {
+                        row += increaseRow;
+                        col += increaseCol;
+                    }
+                    else
+                        break;
                 }
-                else
-                    break;
             }
         }
 
