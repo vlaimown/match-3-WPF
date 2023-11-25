@@ -261,28 +261,11 @@ namespace Match3
 
             if (selectedCount == 2)
             {
-                Point point = null;
                 selectedCount = 0;
 
                 curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
 
-                var tmp1 = selectedCell1;
-                var tmp2 = selectedCell2;
-
-                var tmp = selectedCell1.Item;
-                selectedCell1.Item = selectedCell2.Item;
-                selectedCell2.Item = tmp;
-
-                RootGrid.Children.Remove(tmp1.Item.Shape);
-                RootGrid.Children.Remove(tmp2.Item.Shape);
-
-                point = SetPointCell(selectedCell1);
-                SetCanvasPosition(selectedCell1.Item.Shape, point.X, point.Y, selectedCell1.Size.Width / 2, selectedCell1.Size.Heigth / 2);
-                RootGrid.Children.Add(selectedCell1.Item.Shape);
-
-                point = SetPointCell(selectedCell2);
-                SetCanvasPosition(selectedCell2.Item.Shape, point.X, point.Y, selectedCell2.Size.Width / 2, selectedCell2.Size.Heigth / 2);
-                RootGrid.Children.Add(selectedCell2.Item.Shape);
+                SwitchBetweenElements();
 
                 selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
                 selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
@@ -328,6 +311,9 @@ namespace Match3
 
                 txt.Text = $"{matchedItems1.Count + matchedItems2.Count + matchedItems3.Count}";
 
+                if (matchedItems1.Count < 2 && matchedItems2.Count < 2 && matchedItems3.Count < 2)
+                    SwitchBetweenElements();
+
                 if (matchedItems1.Count >= 2)
                     Match(matchedItems1);
 
@@ -355,6 +341,37 @@ namespace Match3
                     Match(matchedItems3);
                 }
             }
+        }
+
+        private void SwitchBetweenElements()
+        {
+            Point point = null;
+
+            var tmp1 = selectedCell1;
+            var tmp2 = selectedCell2;
+
+            var tmp = selectedCell1.Item;
+            selectedCell1.Item = selectedCell2.Item;
+            selectedCell2.Item = tmp;
+
+            RootGrid.Children.Remove(tmp1.Item.Shape);
+            RootGrid.Children.Remove(tmp2.Item.Shape);
+
+            point = SetPointCell(selectedCell1);
+            SetCanvasPosition(selectedCell1.Item.Shape, point.X, point.Y, selectedCell1.Size.Width / 2, selectedCell1.Size.Heigth / 2);
+            RootGrid.Children.Add(selectedCell1.Item.Shape);
+
+            point = SetPointCell(selectedCell2);
+            SetCanvasPosition(selectedCell2.Item.Shape, point.X, point.Y, selectedCell2.Size.Width / 2, selectedCell2.Size.Heigth / 2);
+            RootGrid.Children.Add(selectedCell2.Item.Shape);
+        }
+
+        private void OffsetDownElements(List<Item> deletedItems)
+        {
+            //foreach (Item item in deletedItems) 
+            //{
+            //    if (item)
+            //}
         }
 
         private void Match(List<Item> matchedList)
@@ -401,26 +418,6 @@ namespace Match3
                 }
             }
         }
-
-        //private void FindMatch(int increaseRow, int increaseCol, List<Item> matchedItems)
-        //{
-        //    Item curItem = selectedCell2.Item;
-
-        //    while (curItem.GetType() == field.GameField[rowNum + increaseRow, colNum + increaseCol].Item.GetType())
-        //    {
-        //        matchedItems.Add(field.GameField[rowNum + increaseRow, colNum + increaseCol].Item);
-        //        curItem = field.GameField[rowNum + increaseRow, colNum + increaseCol].Item;
-
-        //        if ((rowNum + increaseRow >= 0 && rowNum + increaseRow < field.GameField.GetLength(0)) &&
-        //            (colNum + increaseCol >= 0 && colNum + increaseCol < field.GameField.GetLength(1)))
-        //        {
-        //            increaseRow += increaseRow;
-        //            increaseCol += increaseCol;
-        //        }
-        //        else
-        //            break;
-        //    }
-        //}
 
         //private void TestButton_Click_1(object sender, RoutedEventArgs e)
         //{
