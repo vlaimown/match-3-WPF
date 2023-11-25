@@ -11,15 +11,14 @@ namespace Match3
 
         private int rowNum;
         private int colNum;
-        //private System.Windows.Shapes.Rectangle shape;
 
-        public Cell(int numRow, int numColumn, Button button, Point point, Size size/*System.Windows.Shapes.Rectangle rectangle,*/)
+        public Cell(int numRow, int numColumn, Button button, Point point, Size size)
         {
             this.rowNum = numRow;
             this.colNum = numColumn;
 
             this.btn = button;
-            //this.shape = rectangle;
+
             this.point = point;
             this.size = size;
 
@@ -28,7 +27,7 @@ namespace Match3
             //btn.Margin = new System.Windows.Thickness(this.point.X + (rowNum * size.Width + rowNum * size.Width), this.point.Y + (colNum * size.Heigth + colNum * size.Heigth), 0, 0);
             //btn.Margin = new System.Windows.Thickness(this.point.X + (rowNum * size.Width), this.point.Y + (colNum * size.Heigth), 0, 0);
             btn.Background = System.Windows.Media.Brushes.White;
-            btn.BorderBrush = System.Windows.Media.Brushes.Red;
+            btn.BorderBrush = System.Windows.Media.Brushes.Black;
 
             //Canvas.SetLeft(btn, this.point.X);
             //Canvas.SetTop(btn, this.point.Y);

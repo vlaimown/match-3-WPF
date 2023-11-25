@@ -9,22 +9,14 @@
     <Canvas Name="RootGrid">
         <Button x:Name="PlayButton" 
                 Content="Play" 
-                HorizontalAlignment="Center" 
-                Width="100px" 
-                Height="25px" 
-                VerticalAlignment="Center"
-                Cursor="Hand"
-                Click="PlayButton_Click"/>
-        <TextBlock Name="Time"  TextWrapping="Wrap" Text="TIME: 60" Margin="28,20,684,382"/>
-        <TextBlock Name="Score" TextWrapping="Wrap" Text="SCORE: 0" Margin="28,57,0,345" HorizontalAlignment="Left" Width="88"/>
-        <TextBlock Name="txt" HorizontalAlignment="Center" Margin="0,76,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top"/>
-        <Button x:Name="TestButton" 
-                Content="Test" 
                 HorizontalAlignment="Left" 
                 Width="100px" 
                 Height="25px" 
                 VerticalAlignment="Top"
                 Cursor="Hand"
-                Click="TestButton_Click" Background="Aqua" Margin="509,121,0,0"/>
+                Click="PlayButton_Click" Canvas.Left="350" Canvas.Top="200"/>
+        <TextBlock Name="Time"  TextWrapping="Wrap" Text="TIME: 60" Margin="28,20,684,382"/>
+        <TextBlock Name="Score" TextWrapping="Wrap" Text="SCORE: 0" HorizontalAlignment="Left" Width="88" Canvas.Left="28" Canvas.Top="41"/>
+        <TextBlock Name="txt" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Canvas.Left="140" Canvas.Top="28"/>
     </Canvas>
 </Window>

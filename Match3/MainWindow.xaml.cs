@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using System.Windows.Shapes;
 using System.IO;
 using System.Drawing;
+using System.Windows.Documents;
 
 namespace Match3
 {
@@ -99,20 +100,19 @@ namespace Match3
             for (int i = 0; i < field.GameField.GetLength(0); i++)
             {
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
-                {
+               {
                     Point point = new Point(100, 100);
                     Size size = new Size(25, 25);
                     Button button = new Button();
 
                     button.Click += new RoutedEventHandler(TestButton_Click);
 
-                    Cell cell = new Cell(i, j, button, point, size /*new Rectangle(),*/);
+                    Cell cell = new Cell(i, j, button, point, size);
                     field.GameField[i, j] = cell;
 
                     point = SetPointCell(field.GameField[i, j]);
 
-                    Canvas.SetLeft(cell.Button, point.X);
-                    Canvas.SetTop(cell.Button, point.Y);
+                    SetCanvasPosition(cell.Button, point.X, point.Y);
 
                     RootGrid.Children.Add(field.GameField[i, j].Button);
                 }
@@ -125,9 +125,9 @@ namespace Match3
                     Cube cube = new Cube(2, 2, field.GameField[i, j]);
                     Circle circle = new Circle(2, 2, field.GameField[i, j]);
                     Figure2 figure2 = new Figure2(2, 2, field.GameField[i, j]);
-                    /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
-                    Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
-                    //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
+        //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
+        //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
+        //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
                     Item[] arr = { cube, circle, figure2, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
                     Item item = arr[random.Next(0, arr.Length)];
@@ -136,201 +136,260 @@ namespace Match3
 
                     Point point = SetPointCell(field.GameField[i, j]);
 
-                    Canvas.SetLeft(item.Shape, point.X);
-                    Canvas.SetTop(item.Shape, point.Y);
+                    SetCanvasPosition(item.Shape, point.X, point.Y);
 
                     RootGrid.Children.Add(item.Shape);
                 }
             }
+            RandomItemsFill();
         }
 
-        private void TestButton_Click(object sender, RoutedEventArgs e)
+        private void RandomItemsFill()
         {
-            var btn = e.Source as Button;
-            Cell curCell = null;
+            int horizontalMatch = 0;
+            Item curItem = null;
+
+            //int upItem = 0;
+            //int downItem = 0;
+            //int rightItem = 0;
 
             for (int i = 0; i < field.GameField.GetLength(0); i++)
             {
                 for (int j = 0; j < field.GameField.GetLength(1); j++)
                 {
-                    if (field.GameField[i,j].Button == btn)
+                    //curItem = field.GameField[i, j].Item;
+
+                    if (i == 0 || i == field.GameField.GetLength(0) - 1)
                     {
-                        curCell = field.GameField[i,j];
-                        break;
-                    }
-                }
-            }
-
-            if (selectedCount == 0)
-            {
-                selectedCell1 = curCell;
-                selectedCount = 1;
-            }
-            else if (selectedCount == 1)
-            {
-                if (curCell.ColNum == selectedCell1.ColNum - 1 && curCell.RowNum == selectedCell1.RowNum ||
-                    curCell.ColNum == selectedCell1.ColNum + 1 && curCell.RowNum == selectedCell1.RowNum ||
-                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum + 1 ||
-                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum - 1)
-                {
-                    selectedCell2 = curCell;
-                    selectedCount = 2;
-                    txt.Text = selectedCount.ToString();
-                }
-                else
-                {
-                    selectedCount = 0;
-                    selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
-                    selectedCell1 = null;
-                    curCell.Button.Background = System.Windows.Media.Brushes.White;
-                }
-
-                if (selectedCell1 == curCell)
-                {
-                    selectedCount = 0;
-                    selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
-                    selectedCell1 = null;
-                    curCell.Button.Background = System.Windows.Media.Brushes.White;
-                }
-            }
-
-            if (selectedCount == 1)
-            {
-                curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
-                txt.Text = $"{curCell.Item}";
-            }
-
-            if (selectedCount == 2)
-            {
-                Point point = null;
-
-                curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
-                txt.Text = selectedCount.ToString();
-
-                var tmp1 = selectedCell1;
-                var tmp2 = selectedCell2;
-
-                var tmp = selectedCell1.Item;
-                selectedCell1.Item = selectedCell2.Item;
-                selectedCell2.Item = tmp;
-
-                RootGrid.Children.Remove(tmp1.Item.Shape);
-                RootGrid.Children.Remove(tmp2.Item.Shape);
-
-                selectedCount = 0;
-
-                point = SetPointCell(selectedCell1);
-
-                SetCanvasPosition(selectedCell1.Item.Shape, point.X, point.Y, selectedCell1.Size.Width / 2, selectedCell1.Size.Heigth / 2);
-
-                RootGrid.Children.Add(selectedCell1.Item.Shape);
-
-                point = SetPointCell(selectedCell2);
-
-                SetCanvasPosition(selectedCell2.Item.Shape, point.X, point.Y, selectedCell2.Size.Width/2, selectedCell2.Size.Heigth/2);
-
-                RootGrid.Children.Add(selectedCell2.Item.Shape);
-
-                selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
-                selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
-
-                int directionX = selectedCell1.ColNum - selectedCell2.ColNum;
-                int directionY = selectedCell1.RowNum - selectedCell2.RowNum;
-
-                List<Item> matchedItems1 = new List<Item>();
-                List<Item> matchedItems2 = new List<Item>();
-                List<Item> matchedItems3 = new List<Item>();
-
-                rowNum = selectedCell2.RowNum;
-                colNum = selectedCell2.ColNum;
-
-                if (matchedItems1.Count == 0 && matchedItems2.Count == 0 && matchedItems3.Count == 0)
-                {
-                    if (directionX == 0)
-                    {
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
-                            FindMatch(0, 1, matchedItems1);
-
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
-                            FindMatch(0, -1, matchedItems2);
+                        if (j + 1 < field.GameField.GetLength(1))
+                        {
+                            if (field.GameField[i, j].Item.GetType() == field.GameField[i, j + 1].Item.GetType())
+                            {
+                                horizontalMatch++;
+                                //txt.Text = $"{horizontalMatch}";
+                                if (horizontalMatch >= 2)
+                                {
+                                    RandomDontMatchItem(i, j, 0, 1);
+                                    horizontalMatch = 0;
+                                }
+                            }
+                        }
                     }
 
-                    else if (directionY == 0)
+                    if (j == 0 && i > 0 && i < field.GameField.GetLength(0) - 1)
                     {
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
-                            FindMatch(1, 0, matchedItems1);
+                        Item currentItem = field.GameField[i, j].Item;
+                        if (currentItem.GetType() == field.GameField[i, j + 1].Item.GetType() && currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
+                            RandomDontMatchItem(i, j, 0, 1);
 
-                        if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
-                            FindMatch(-1, 0, matchedItems2);
+                        if (currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
+                            RandomDontMatchItem(i, j, -1, 0);
+
+                        //txt.Text = $"работает!";
+                    }
+
+                    if (j == field.GameField.GetLength(0) - 1 && i > 0 && i < field.GameField.GetLength(0) - 1)
+                    {
+                        Item currentItem = field.GameField[i, j].Item;
+                        if (currentItem.GetType() == field.GameField[i, j - 1].Item.GetType() && currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
+                            RandomDontMatchItem(i, j, 0, -1);
+
+                        if (currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
+                            RandomDontMatchItem(i, j, -1, 0);
+                        //txt.Text = $"{horizontalMatch}";
                     }
                 }
-
-                txt.Text = $"{matchedItems1.Count + matchedItems2.Count}";
-
-                if (matchedItems1.Count >= 2)
-                    Match(matchedItems1);
-
-                if (matchedItems2.Count >= 2)
-                    Match(matchedItems2);
-
-                if (matchedItems3.Count >= 2)
-                    Match(matchedItems3);
+                horizontalMatch = 0;
             }
         }
 
-        private void Match(List<Item> matchedList)
+        private void TestButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var item in matchedList)
-            {
-                RootGrid.Children.Remove(item.Shape);
-                score.Value += item.Value;
-                item.Cell.Item = null;
-            }
-            score.Value += selectedCell2.Item.Value;
-            RootGrid.Children.Remove(selectedCell2.Item.Shape);
-            selectedCell2.Item = null;
-            Score.Text = $"Score: {score.Value}";
+        //    var btn = e.Source as Button;
+        //    Cell curCell = null;
+
+        //    for (int i = 0; i < field.GameField.GetLength(0); i++)
+        //    {
+        //        for (int j = 0; j < field.GameField.GetLength(1); j++)
+        //        {
+        //            if (field.GameField[i,j].Button == btn)
+        //            {
+        //                curCell = field.GameField[i,j];
+        //                break;
+        //            }
+        //        }
+        //    }
+
+        //    if (selectedCount == 0)
+        //    {
+        //        selectedCell1 = curCell;
+        //        selectedCount = 1;
+        //    }
+        //    else if (selectedCount == 1)
+        //    {
+        //        if (curCell.ColNum == selectedCell1.ColNum - 1 && curCell.RowNum == selectedCell1.RowNum ||
+        //            curCell.ColNum == selectedCell1.ColNum + 1 && curCell.RowNum == selectedCell1.RowNum ||
+        //            curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum + 1 ||
+        //            curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum - 1)
+        //        {
+        //            selectedCell2 = curCell;
+        //            selectedCount = 2;
+        //            txt.Text = selectedCount.ToString();
+        //        }
+        //        else
+        //        {
+        //            selectedCount = 0;
+        //            selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+        //            selectedCell1 = null;
+        //            curCell.Button.Background = System.Windows.Media.Brushes.White;
+        //        }
+
+        //        if (selectedCell1 == curCell)
+        //        {
+        //            selectedCount = 0;
+        //            selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+        //            selectedCell1 = null;
+        //            curCell.Button.Background = System.Windows.Media.Brushes.White;
+        //        }
+        //    }
+
+        //    if (selectedCount == 1)
+        //    {
+        //        curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
+        //        txt.Text = $"{curCell.Item}";
+        //    }
+
+        //    if (selectedCount == 2)
+        //    {
+        //        Point point = null;
+
+        //        curCell.Button.Background = System.Windows.Media.Brushes.Cyan;
+        //        txt.Text = selectedCount.ToString();
+
+        //        var tmp1 = selectedCell1;
+        //        var tmp2 = selectedCell2;
+
+        //        var tmp = selectedCell1.Item;
+        //        selectedCell1.Item = selectedCell2.Item;
+        //        selectedCell2.Item = tmp;
+
+        //        RootGrid.Children.Remove(tmp1.Item.Shape);
+        //        RootGrid.Children.Remove(tmp2.Item.Shape);
+
+        //        selectedCount = 0;
+
+        //        point = SetPointCell(selectedCell1);
+
+        //        SetCanvasPosition(selectedCell1.Item.Shape, point.X, point.Y, selectedCell1.Size.Width / 2, selectedCell1.Size.Heigth / 2);
+
+        //        RootGrid.Children.Add(selectedCell1.Item.Shape);
+
+        //        point = SetPointCell(selectedCell2);
+
+        //        SetCanvasPosition(selectedCell2.Item.Shape, point.X, point.Y, selectedCell2.Size.Width/2, selectedCell2.Size.Heigth/2);
+
+        //        RootGrid.Children.Add(selectedCell2.Item.Shape);
+
+        //        selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
+        //        selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
+
+        //        int directionX = selectedCell1.ColNum - selectedCell2.ColNum;
+        //        int directionY = selectedCell1.RowNum - selectedCell2.RowNum;
+
+        //        List<Item> matchedItems1 = new List<Item>();
+        //        List<Item> matchedItems2 = new List<Item>();
+        //        List<Item> matchedItems3 = new List<Item>();
+
+        //        rowNum = selectedCell2.RowNum;
+        //        colNum = selectedCell2.ColNum;
+
+        //        if (matchedItems1.Count == 0 && matchedItems2.Count == 0 && matchedItems3.Count == 0)
+        //        {
+        //            if (directionX == 0)
+        //            {
+        //                if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + 1].Item.GetType())
+        //                    FindMatch(0, 1, matchedItems1);
+
+        //                if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum - 1].Item.GetType())
+        //                    FindMatch(0, -1, matchedItems2);
+        //            }
+
+        //            else if (directionY == 0)
+        //            {
+        //                if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
+        //                    FindMatch(1, 0, matchedItems1);
+
+        //                if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
+        //                    FindMatch(-1, 0, matchedItems2);
+        //            }
+        //        }
+
+        //        txt.Text = $"{matchedItems1.Count + matchedItems2.Count}";
+
+        //        if (matchedItems1.Count >= 2)
+        //            Match(matchedItems1);
+
+        //        if (matchedItems2.Count >= 2)
+        //            Match(matchedItems2);
+
+        //        if (matchedItems3.Count >= 2)
+        //            Match(matchedItems3);
+        //    }
         }
 
-        private void FindMatch(int increaseRow, int increaseCol, List<Item> matchedItems)
-        {
-            Item curItem = selectedCell2.Item;
+        //private void Match(List<Item> matchedList)
+        //{
+        //    foreach (var item in matchedList)
+        //    {
+        //        RootGrid.Children.Remove(item.Shape);
+        //        score.Value += item.Value;
+        //        item.Cell.Item = null;
+        //    }
+        //    score.Value += selectedCell2.Item.Value;
+        //    RootGrid.Children.Remove(selectedCell2.Item.Shape);
+        //    selectedCell2.Item = null;
+        //    Score.Text = $"Score: {score.Value}";
+        //}
 
-            while (curItem.GetType() == field.GameField[rowNum + increaseRow, colNum + increaseCol].Item.GetType())
-            {
-                matchedItems.Add(field.GameField[rowNum + increaseRow, colNum + increaseCol].Item);
-                curItem = field.GameField[rowNum + increaseRow, colNum + increaseCol].Item;
+        //private void FindMatch(int increaseRow, int increaseCol, List<Item> matchedItems)
+        //{
+        //    Item curItem = selectedCell2.Item;
 
-                if ((rowNum + increaseRow >= 0 && rowNum + increaseRow < field.GameField.GetLength(0)) &&
-                    (colNum + increaseCol >= 0 && colNum + increaseCol < field.GameField.GetLength(1)))
-                {
-                    increaseRow += increaseRow;
-                    increaseCol += increaseCol;
-                }
-                else
-                    break;
-            }
-        }
+        //    while (curItem.GetType() == field.GameField[rowNum + increaseRow, colNum + increaseCol].Item.GetType())
+        //    {
+        //        matchedItems.Add(field.GameField[rowNum + increaseRow, colNum + increaseCol].Item);
+        //        curItem = field.GameField[rowNum + increaseRow, colNum + increaseCol].Item;
 
-        private void TestButton_Click_1(object sender, RoutedEventArgs e)
-        {
+        //        if ((rowNum + increaseRow >= 0 && rowNum + increaseRow < field.GameField.GetLength(0)) &&
+        //            (colNum + increaseCol >= 0 && colNum + increaseCol < field.GameField.GetLength(1)))
+        //        {
+        //            increaseRow += increaseRow;
+        //            increaseCol += increaseCol;
+        //        }
+        //        else
+        //            break;
+        //    }
+        //}
 
-        }
+                //private void TestButton_Click_1(object sender, RoutedEventArgs e)
+                //{
 
-        private void SwitchElements()
-        {
+                //}
 
-        }
+                //private void SwitchElements()
+                //{
 
-        private void SwitchElementsBack()
-        {
+                //}
 
-        }
+                //private void SwitchElementsBack()
+                //{
+
+                //}
 
         private void SetCanvasPosition(UIElement element, int x, int y, int offsetX = 0, int offsetY = 0)
         {
-            Canvas.SetLeft(element, 0);
-            Canvas.SetTop(element, 0);
+            Canvas.SetLeft(element, x);
+            Canvas.SetTop(element, y);
         }
 
         private Point SetPointCell(Cell cell)
@@ -340,6 +399,37 @@ namespace Match3
             Point point = new Point(x, y);
 
             return point;
+        }
+
+        private void RandomDontMatchItem(int row, int col, int rowOffset = 0, int colOffset = 0)
+        {
+            Item randomItem = RandomItem(row + rowOffset, col + colOffset);
+
+            while (field.GameField[row + rowOffset, col + colOffset].Item.GetType() == randomItem.GetType())
+                randomItem = RandomItem(row + rowOffset, col + colOffset);
+
+            RootGrid.Children.Remove(field.GameField[row + rowOffset, col + colOffset].Item.Shape);
+
+            Point point = SetPointCell(field.GameField[row + rowOffset, col + colOffset]);
+            SetCanvasPosition(randomItem.Shape, point.X, point.Y);
+
+            field.GameField[row + rowOffset, col + colOffset].Item = randomItem;
+            RootGrid.Children.Add(randomItem.Shape);
+        }
+
+        private Item RandomItem(int row, int col)
+        {
+            Cube cube = new Cube(2, 2, field.GameField[row, col]);
+            Circle circle = new Circle(2, 2, field.GameField[row, col]);
+            Figure2 figure2 = new Figure2(2, 2, field.GameField[row, col]);
+            //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
+            //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
+            //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
+
+            Item[] arr = { cube, circle, figure2, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
+            Item item = arr[random.Next(0, arr.Length)];
+
+            return item;
         }
     }
 }
