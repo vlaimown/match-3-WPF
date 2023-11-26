@@ -137,18 +137,18 @@ namespace Match3
                 {
                     Cube cube = new Cube(2, 2, field.GameField[i, j]);
                     Circle circle = new Circle(2, 2, field.GameField[i, j]);
-                    Capsule capsule = new Capsule(2, 2, field.GameField[i, j]);
+                    HorizontalCapsule verticalCapsule = new HorizontalCapsule(2, 2, field.GameField[i, j]);
+                    VerticalCapsule horizontalCapsule = new VerticalCapsule(2, 2, field.GameField[i, j]);
         //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
         //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
         //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
-                    Item[] arr = { cube, circle, capsule, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
+                    Item[] arr = { cube, circle, verticalCapsule, horizontalCapsule, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
                     Item item = arr[random.Next(0, arr.Length)];
 
                     field.GameField[i, j].Item = item;
 
                     Point point = SetPointCell(field.GameField[i, j]);
-
                     SetCanvasPosition(item.Shape, point.X, point.Y);
 
                     RootGrid.Children.Add(item.Shape);
@@ -172,6 +172,7 @@ namespace Match3
                 {
                     //curItem = field.GameField[i, j].Item;
 
+
                     if (i == 0 || i == field.GameField.GetLength(0) - 1)
                     {
                         if (j + 1 < field.GameField.GetLength(1))
@@ -189,7 +190,7 @@ namespace Match3
                         }
                     }
 
-                    if (j == 0 && i > 0 && i < field.GameField.GetLength(0) - 1)
+                    if (j == 0 && i - 1 > 0 && i + 1 < field.GameField.GetLength(0) - 1)
                     {
                         Item currentItem = field.GameField[i, j].Item;
                         if (currentItem.GetType() == field.GameField[i, j + 1].Item.GetType() && currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
@@ -201,7 +202,14 @@ namespace Match3
                         //txt.Text = $"работает!";
                     }
 
-                    if (j == field.GameField.GetLength(0) - 1 && i > 0 && i < field.GameField.GetLength(0) - 1)
+                    else if ((j - 1 > 0) && (j + 1 < field.GameField.GetLength(0)) && (i - 1 > 0) && (i + 1 < field.GameField.GetLength(1)))
+                    {
+                        Item currentItem = field.GameField[i, j].Item;
+                        if (currentItem.GetType() == field.GameField[i, j - 1].Item.GetType() && currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i, j + 1].Item.GetType())
+                            RandomDontMatchItem(i, j, 0, 0);
+                    }
+
+                    if (j == field.GameField.GetLength(0) - 1 && i - 1 > 0 && i + 1 < field.GameField.GetLength(0) - 1)
                     {
                         Item currentItem = field.GameField[i, j].Item;
                         if (currentItem.GetType() == field.GameField[i, j - 1].Item.GetType() && currentItem.GetType() == field.GameField[i + 1, j].Item.GetType() && currentItem.GetType() == field.GameField[i - 1, j].Item.GetType())
@@ -240,24 +248,17 @@ namespace Match3
             }
             else if (selectedCount == 1)
             {
-                if (curCell.ColNum == selectedCell1.ColNum - 1 && curCell.RowNum == selectedCell1.RowNum ||
+                if ((curCell.ColNum == selectedCell1.ColNum - 1 && curCell.RowNum == selectedCell1.RowNum ||
                     curCell.ColNum == selectedCell1.ColNum + 1 && curCell.RowNum == selectedCell1.RowNum ||
                     curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum + 1 ||
-                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum - 1)
+                    curCell.ColNum == selectedCell1.ColNum && curCell.RowNum == selectedCell1.RowNum - 1) &&
+                    selectedCell1 != curCell)
                 {
                     selectedCell2 = curCell;
                     selectedCount = 2;
                     txt.Text = selectedCount.ToString();
                 }
                 else
-                {
-                    selectedCount = 0;
-                    selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
-                    selectedCell1 = null;
-                    curCell.Button.Background = System.Windows.Media.Brushes.White;
-                }
-
-                if (selectedCell1 == curCell)
                 {
                     selectedCount = 0;
                     selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
@@ -283,7 +284,7 @@ namespace Match3
                 selectedCell1.Button.Background = System.Windows.Media.Brushes.White;
                 selectedCell2.Button.Background = System.Windows.Media.Brushes.White;
 
-                int directionX = selectedCell1.ColNum - selectedCell2.ColNum;
+                int directionX = (selectedCell1.ColNum - selectedCell2.ColNum) * -1;
                 int directionY = selectedCell1.RowNum - selectedCell2.RowNum;
 
                 List<Item> matchedItems1 = new List<Item>();
@@ -299,7 +300,7 @@ namespace Match3
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum + 1, colNum].Item.GetType())
                             FindMatch(rowNum, colNum, matchedItems1, 1, 0);
 
-                    if (rowNum - 1 < field.GameField.GetLength(0))
+                    if (rowNum - 1 >= 0)
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
                             FindMatch(rowNum, colNum, matchedItems2, -1, 0);
 
@@ -322,36 +323,51 @@ namespace Match3
                             FindMatch(rowNum, colNum, matchedItems3, directionY, 0);
                 }
 
-                txt.Text = $"{matchedItems1.Count + matchedItems2.Count + matchedItems3.Count}";
+                txt.Text = $"{matchedItems1.Count + matchedItems2.Count + matchedItems3.Count}, dirX {directionX}, dirY {directionY}";
 
                 if (matchedItems1.Count < 2 && matchedItems2.Count < 2 && matchedItems3.Count < 2)
                     SwitchBetweenElements();
 
                 if (matchedItems1.Count >= 2)
-                    Match(matchedItems1);
+                {
+                    mList = matchedItems1;
+                    Match(mList);
+                }
 
                 else if (matchedItems2.Count >= 2)
-                    Match(matchedItems2);
+                {
+                    mList = matchedItems2;
+                    Match(mList);
+                }
 
                 else if (matchedItems3.Count >= 2)
-                    Match(matchedItems3);
+                {
+                    mList = matchedItems3;
+                    Match(mList);
+                }
 
                 else if (matchedItems1.Count + matchedItems2.Count >= 2)
                 {
-                    Match(matchedItems1);
-                    Match(matchedItems2);
+                    matchedItems1.AddRange(matchedItems2);
+                    mList = matchedItems1;
+                    Match(mList);
+                    OffsetDownElements(mList);
                 }
 
                 else if (matchedItems1.Count + matchedItems3.Count >= 2)
                 {
-                    Match(matchedItems1);
-                    Match(matchedItems3);
+                    matchedItems1.AddRange(matchedItems2);
+                    mList = matchedItems1;
+                    Match(mList);
+                    OffsetDownElements(mList);
                 }
 
                 else if (matchedItems2.Count + matchedItems3.Count >= 2)
                 {
-                    Match(matchedItems2);
-                    Match(matchedItems3);
+                    matchedItems2.AddRange(matchedItems3);
+                    mList = matchedItems2;
+                    Match(mList);
+                    OffsetDownElements(mList);
                 }
             }
         }
@@ -381,10 +397,38 @@ namespace Match3
 
         private void OffsetDownElements(List<Item> deletedItems)
         {
-            //foreach (Item item in deletedItems) 
-            //{
-            //    if (item)
-            //}
+            txt.Text = "AAA";
+            bool willReturn = false;
+            foreach (Item item in deletedItems)
+            {
+                int row = item.Cell.RowNum;
+                int col = item.Cell.ColNum;
+                for (int i = row; i > 0; i--)
+                {
+                    if (i == 0)
+                    {
+                        RandomDontMatchItem(i, col);
+                        if (willReturn)
+                            i = row;
+                    }
+
+                    else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item != null)
+                    {
+                        field.GameField[i, col].Item = field.GameField[i - 1, col].Item;
+                        RootGrid.Children.Remove(field.GameField[i - 1, col].Item.Shape);
+                        field.GameField[i - 1, col].Item = null;
+                        txt.Text = "BBB";
+                        Point point = SetPointCell(field.GameField[i, col]);
+                        RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
+                    }
+
+                    else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item == null)
+                    {
+                        willReturn = true;
+                        continue;
+                    }
+                }
+            }
         }
 
         private void Match(List<Item> matchedList)
@@ -395,23 +439,19 @@ namespace Match3
             animation.Duration = TimeSpan.FromSeconds(1);
             animation.Completed += new EventHandler(myanim_Completed);
             
-            mList = matchedList;
+            //mList = matchedList;
             foreach (var item in matchedList)
             {
                 item.Shape.BeginAnimation(OpacityProperty, animation);
-
-                //if (item.Shape.Opacity == 0)
-                //{
-                //    score.Value += item.Value;
-                //    item.Cell.Item = null;
-                //}
-                //RootGrid.Children.Remove(item.Shape);
-
+                score.Value += item.Value;
+                item.Cell.Item = null;
             }
 
             if (selectedCell2.Item != null)
             {
                 selectedCell2.Item.Shape.BeginAnimation(OpacityProperty, animation);
+                score.Value += selectedCell2.Item.Value;
+                selectedCell2.Item.Cell.Item = null;
             }
 
             Score.Text = $"Score: {score.Value}";
@@ -419,21 +459,7 @@ namespace Match3
 
         private void myanim_Completed(object sender, EventArgs e)
         {
-            animStop();
-        }
 
-        private void animStop()
-        {
-            if (mList != null)
-            {
-                foreach (var item in mList)
-                {
-                    RootGrid.Children.Remove(item.Shape);
-                    score.Value += item.Value;
-                    item.Cell.Item = null;
-                }
-                mList = null;
-            }
         }
 
         private void FindMatch(int row, int col, List<Item> matchedItems, int increaseRow = 0, int increaseCol = 0)
@@ -443,12 +469,15 @@ namespace Match3
             row += increaseRow;
             col += increaseCol;
 
-            if (row >= 0 && col >= 0 && row < field.GameField.GetLength(0) && col < field.GameField.GetLength(1))
+            if (curItem != null && field.GameField[row, col].Item != null && row >= 0 && col >= 0 && row < field.GameField.GetLength(0) - 1 && col < field.GameField.GetLength(1) - 1)
             {
                 while (curItem.GetType() == field.GameField[row, col].Item.GetType())
                 {
                     matchedItems.Add(field.GameField[row, col].Item);
                     curItem = field.GameField[row, col].Item;
+
+                    if (curItem == null || field.GameField[row, col].Item == null)
+                        break;
 
                     if ((row + increaseRow >= 0 && row + increaseRow < field.GameField.GetLength(0)) &&
                         (row + increaseCol >= 0 && col + increaseCol < field.GameField.GetLength(1)))
@@ -512,12 +541,13 @@ namespace Match3
         {
             Cube cube = new Cube(2, 2, field.GameField[row, col]);
             Circle circle = new Circle(2, 2, field.GameField[row, col]);
-            Capsule capsule = new Capsule(2, 2, field.GameField[row, col]);
+            HorizontalCapsule verticalCapsule = new HorizontalCapsule(2, 2, field.GameField[row, col]);
+            VerticalCapsule horizontalCapsule = new VerticalCapsule(2, 2, field.GameField[row, col]);
             //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
             //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
             //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
-            Item[] arr = { cube, circle, capsule, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
+            Item[] arr = { cube, circle, verticalCapsule, horizontalCapsule /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
             Item item = arr[random.Next(0, arr.Length)];
 
             return item;
