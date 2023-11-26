@@ -11,6 +11,9 @@ using System.Windows.Shapes;
 using System.IO;
 using System.Drawing;
 using System.Windows.Documents;
+using System.Windows.Media.Animation;
+using System.Threading;
+using System.Security.Policy;
 
 namespace Match3
 {
@@ -37,12 +40,22 @@ namespace Match3
         private int colNum = 0;
 
         private Score score = new Score();
+
+        private List<Item> mList;
+        private bool animPlaying = false;
+
         public MainWindow()
         {
             InitializeComponent();
 
             Time.Visibility = System.Windows.Visibility.Hidden;
             Score.Visibility = System.Windows.Visibility.Hidden;
+
+            //DoubleAnimation animation = new DoubleAnimation();
+            //animation.From = 1;
+            //animation.To = 0;
+            //animation.Duration = TimeSpan.FromSeconds(3);
+            //PlayButton.BeginAnimation(OpacityProperty, animation);
         }
 
         private void Timer_Start()
@@ -124,12 +137,12 @@ namespace Match3
                 {
                     Cube cube = new Cube(2, 2, field.GameField[i, j]);
                     Circle circle = new Circle(2, 2, field.GameField[i, j]);
-                    Figure2 figure2 = new Figure2(2, 2, field.GameField[i, j]);
+                    Capsule capsule = new Capsule(2, 2, field.GameField[i, j]);
         //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
         //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
         //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
-                    Item[] arr = { cube, circle, figure2, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
+                    Item[] arr = { cube, circle, capsule, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
                     Item item = arr[random.Next(0, arr.Length)];
 
                     field.GameField[i, j].Item = item;
@@ -376,21 +389,51 @@ namespace Match3
 
         private void Match(List<Item> matchedList)
         {
+            DoubleAnimation animation = new DoubleAnimation();
+            animation.From = 1;
+            animation.To = 0;
+            animation.Duration = TimeSpan.FromSeconds(1);
+            animation.Completed += new EventHandler(myanim_Completed);
+            
+            mList = matchedList;
             foreach (var item in matchedList)
             {
-                RootGrid.Children.Remove(item.Shape);
-                score.Value += item.Value;
-                item.Cell.Item = null;
+                item.Shape.BeginAnimation(OpacityProperty, animation);
+
+                //if (item.Shape.Opacity == 0)
+                //{
+                //    score.Value += item.Value;
+                //    item.Cell.Item = null;
+                //}
+                //RootGrid.Children.Remove(item.Shape);
+
             }
 
             if (selectedCell2.Item != null)
             {
-                score.Value += selectedCell2.Item.Value;
-                RootGrid.Children.Remove(selectedCell2.Item.Shape);
-                selectedCell2.Item = null;
+                selectedCell2.Item.Shape.BeginAnimation(OpacityProperty, animation);
             }
 
             Score.Text = $"Score: {score.Value}";
+        }
+
+        private void myanim_Completed(object sender, EventArgs e)
+        {
+            animStop();
+        }
+
+        private void animStop()
+        {
+            if (mList != null)
+            {
+                foreach (var item in mList)
+                {
+                    RootGrid.Children.Remove(item.Shape);
+                    score.Value += item.Value;
+                    item.Cell.Item = null;
+                }
+                mList = null;
+            }
         }
 
         private void FindMatch(int row, int col, List<Item> matchedItems, int increaseRow = 0, int increaseCol = 0)
@@ -469,12 +512,12 @@ namespace Match3
         {
             Cube cube = new Cube(2, 2, field.GameField[row, col]);
             Circle circle = new Circle(2, 2, field.GameField[row, col]);
-            Figure2 figure2 = new Figure2(2, 2, field.GameField[row, col]);
+            Capsule capsule = new Capsule(2, 2, field.GameField[row, col]);
             //            /*Figure3 figure3 = new Figure3(i, j, 2, 2, field.GameField[i, j]);
             //            Figure_4 figure4 = new Figure_4(i, j, 2, 2, field.GameField[i, j]);*/
             //            //Rhomb rhomb = new Rhomb(1, 1, field.GameField[i, j], i, j);
 
-            Item[] arr = { cube, circle, figure2, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
+            Item[] arr = { cube, circle, capsule, /*figure3, figure4/*, pentagon, rhomb, triangle*/ };
             Item item = arr[random.Next(0, arr.Length)];
 
             return item;

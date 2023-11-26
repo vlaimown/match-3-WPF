@@ -22,6 +22,8 @@ namespace Match3
             this.point = point;
             this.size = size;
 
+            //this.item = item;
+            btn.Tag = "AAA";
             btn.Width = size.Width;
             btn.Height = size.Heigth;
             //btn.Margin = new System.Windows.Thickness(this.point.X + (rowNum * size.Width + rowNum * size.Width), this.point.Y + (colNum * size.Heigth + colNum * size.Heigth), 0, 0);
