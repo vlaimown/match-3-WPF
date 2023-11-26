@@ -325,13 +325,14 @@ namespace Match3
 
                 txt.Text = $"{matchedItems1.Count + matchedItems2.Count + matchedItems3.Count}, dirX {directionX}, dirY {directionY}";
 
-                if (matchedItems1.Count < 2 && matchedItems2.Count < 2 && matchedItems3.Count < 2)
-                    SwitchBetweenElements();
+                //if (matchedItems1.Count < 2 && matchedItems2.Count < 2 && matchedItems3.Count < 2)
+                //    SwitchBetweenElements();
 
                 if (matchedItems1.Count >= 2)
                 {
                     mList = matchedItems1;
-                    Match(mList);
+                    Match(mList); 
+                    OffsetDownElements(mList);
                 }
 
                 else if (matchedItems2.Count >= 2)
@@ -351,7 +352,6 @@ namespace Match3
                     matchedItems1.AddRange(matchedItems2);
                     mList = matchedItems1;
                     Match(mList);
-                    OffsetDownElements(mList);
                 }
 
                 else if (matchedItems1.Count + matchedItems3.Count >= 2)
@@ -359,7 +359,6 @@ namespace Match3
                     matchedItems1.AddRange(matchedItems2);
                     mList = matchedItems1;
                     Match(mList);
-                    OffsetDownElements(mList);
                 }
 
                 else if (matchedItems2.Count + matchedItems3.Count >= 2)
@@ -367,7 +366,6 @@ namespace Match3
                     matchedItems2.AddRange(matchedItems3);
                     mList = matchedItems2;
                     Match(mList);
-                    OffsetDownElements(mList);
                 }
             }
         }
@@ -379,9 +377,13 @@ namespace Match3
             var tmp1 = selectedCell1;
             var tmp2 = selectedCell2;
 
-            var tmp = selectedCell1.Item;
+            var tmpItem = selectedCell1.Item;
             selectedCell1.Item = selectedCell2.Item;
-            selectedCell2.Item = tmp;
+            selectedCell2.Item = tmpItem;
+
+            var tmpCell = selectedCell1.Item.Cell;
+            selectedCell1.Item.Cell = selectedCell2.Item.Cell;
+            selectedCell2.Item.Cell = tmpCell;
 
             RootGrid.Children.Remove(tmp1.Item.Shape);
             RootGrid.Children.Remove(tmp2.Item.Shape);
@@ -403,30 +405,34 @@ namespace Match3
             {
                 int row = item.Cell.RowNum;
                 int col = item.Cell.ColNum;
-                for (int i = row; i > 0; i--)
+                for (int i = row; i >= 0; i--)
                 {
+                    txt.Text = "BBB";
+                    //RandomDontMatchItem(i, col);
+                    //Point point = SetPointCell(field.GameField[i, col]);
+                    //RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
                     if (i == 0)
                     {
                         RandomDontMatchItem(i, col);
-                        if (willReturn)
-                            i = row;
+                        //if (willReturn)
+                        //    i = row;
                     }
 
-                    else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item != null)
-                    {
-                        field.GameField[i, col].Item = field.GameField[i - 1, col].Item;
-                        RootGrid.Children.Remove(field.GameField[i - 1, col].Item.Shape);
-                        field.GameField[i - 1, col].Item = null;
-                        txt.Text = "BBB";
-                        Point point = SetPointCell(field.GameField[i, col]);
-                        RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
-                    }
+                    //else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item != null)
+                    //{
+                    //    field.GameField[i, col].Item = field.GameField[i - 1, col].Item;
+                    //    RootGrid.Children.Remove(field.GameField[i - 1, col].Item.Shape);
+                    //    field.GameField[i - 1, col].Item = null;
+                    //    txt.Text = "BBB";
+                    //    Point point = SetPointCell(field.GameField[i, col]);
+                    //    RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
+                    //}
 
-                    else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item == null)
-                    {
-                        willReturn = true;
-                        continue;
-                    }
+                    //else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item == null)
+                    //{
+                    //    willReturn = true;
+                    //    continue;
+                    //}
                 }
             }
         }
@@ -439,7 +445,6 @@ namespace Match3
             animation.Duration = TimeSpan.FromSeconds(1);
             animation.Completed += new EventHandler(myanim_Completed);
             
-            //mList = matchedList;
             foreach (var item in matchedList)
             {
                 item.Shape.BeginAnimation(OpacityProperty, animation);
@@ -450,10 +455,13 @@ namespace Match3
             if (selectedCell2.Item != null)
             {
                 selectedCell2.Item.Shape.BeginAnimation(OpacityProperty, animation);
+                matchedList.Add(selectedCell2.Item);
                 score.Value += selectedCell2.Item.Value;
                 selectedCell2.Item.Cell.Item = null;
             }
 
+            mList = matchedList;
+            OffsetDownElements(mList);
             Score.Text = $"Score: {score.Value}";
         }
 
@@ -476,11 +484,11 @@ namespace Match3
                     matchedItems.Add(field.GameField[row, col].Item);
                     curItem = field.GameField[row, col].Item;
 
-                    if (curItem == null || field.GameField[row, col].Item == null)
+                    if ((curItem == null || field.GameField[row, col].Item == null) || ( row > field.GameField.GetLength(0) - 1) || (col < 0) || (row < 0) || (col > field.GameField.GetLength(1) - 1))
                         break;
 
-                    if ((row + increaseRow >= 0 && row + increaseRow < field.GameField.GetLength(0)) &&
-                        (row + increaseCol >= 0 && col + increaseCol < field.GameField.GetLength(1)))
+                    if (((row + increaseRow >= 0) && (row + increaseRow < field.GameField.GetLength(0))) &&
+                        ((col + increaseCol >= 0) && (col + increaseCol < field.GameField.GetLength(1))))
                     {
                         row += increaseRow;
                         col += increaseCol;
@@ -521,20 +529,25 @@ namespace Match3
             return point;
         }
 
-        private void RandomDontMatchItem(int row, int col, int rowOffset = 0, int colOffset = 0)
+        private Item RandomDontMatchItem(int row, int col, int rowOffset = 0, int colOffset = 0)
         {
             Item randomItem = RandomItem(row + rowOffset, col + colOffset);
 
-            while (field.GameField[row + rowOffset, col + colOffset].Item.GetType() == randomItem.GetType())
-                randomItem = RandomItem(row + rowOffset, col + colOffset);
+            if (field.GameField[row + rowOffset, col + colOffset].Item != null)
+            {
+                while (field.GameField[row + rowOffset, col + colOffset].Item.GetType() == randomItem.GetType())
+                    randomItem = RandomItem(row + rowOffset, col + colOffset);
 
-            RootGrid.Children.Remove(field.GameField[row + rowOffset, col + colOffset].Item.Shape);
+                RootGrid.Children.Remove(field.GameField[row + rowOffset, col + colOffset].Item.Shape);
+            }
 
             Point point = SetPointCell(field.GameField[row + rowOffset, col + colOffset]);
             SetCanvasPosition(randomItem.Shape, point.X, point.Y);
 
             field.GameField[row + rowOffset, col + colOffset].Item = randomItem;
             RootGrid.Children.Add(randomItem.Shape);
+
+            return randomItem;
         }
 
         private Item RandomItem(int row, int col)
