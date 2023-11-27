@@ -8,4 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Match3
-build_property.ProjectDir = C:\Users\VLaD\Desktop\Match3\Match3\
+build_property.ProjectDir = C:\Users\VLaD\Desktop\Match3\match-3-WPF\Match3\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 

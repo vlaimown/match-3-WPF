@@ -128,24 +128,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\VLaD\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\VLaD\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\VLaD\\Desktop\\Match3\\Match3\\Match3.csproj",
+      "projectUniqueName": "C:\\Users\\VLaD\\Desktop\\Match3\\match-3-WPF\\Match3\\Match3.csproj",
       "projectName": "Match3",
-      "projectPath": "C:\\Users\\VLaD\\Desktop\\Match3\\Match3\\Match3.csproj",
+      "projectPath": "C:\\Users\\VLaD\\Desktop\\Match3\\match-3-WPF\\Match3\\Match3.csproj",
       "packagesPath": "C:\\Users\\VLaD\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\VLaD\\Desktop\\Match3\\Match3\\obj\\",
+      "outputPath": "C:\\Users\\VLaD\\Desktop\\Match3\\match-3-WPF\\Match3\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
         "C:\\Users\\VLaD\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -213,7 +208,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.311\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }

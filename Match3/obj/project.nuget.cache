@@ -1,15 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "+5T17zdpd/YaIyQeVEdKs64A69Yz8oOielVqVufGnh5Y4e3WRiESYV/AAoPh2ITl/M3/cYliR3hVT6UQ6BvgFg==",
+  "dgSpecHash": "ZElm1ne8LX90BMNfe5ATcZNwjbUy1GlEQs5sy3RfCHHzn+GYi86/nvNW6vJ4p/0z3TytUNZTz0++QYFkg9Dhtg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\VLaD\\Desktop\\Match3\\Match3\\Match3.csproj",
+  "projectFilePath": "C:\\Users\\VLaD\\Desktop\\Match3\\match-3-WPF\\Match3\\Match3.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.win32.systemevents\\8.0.0\\microsoft.win32.systemevents.8.0.0.nupkg.sha512",
     "C:\\Users\\VLaD\\.nuget\\packages\\system.drawing.common\\8.0.0\\system.drawing.common.8.0.0.nupkg.sha512",
-    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512",
+    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512",
     "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.25\\microsoft.netcore.app.ref.6.0.25.nupkg.sha512",
-    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.25\\microsoft.windowsdesktop.app.ref.6.0.25.nupkg.sha512"
+    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.25\\microsoft.aspnetcore.app.ref.6.0.25.nupkg.sha512",
+    "C:\\Users\\VLaD\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.25\\microsoft.netcore.app.host.win-x64.6.0.25.nupkg.sha512"
   ],
   "logs": []
 }

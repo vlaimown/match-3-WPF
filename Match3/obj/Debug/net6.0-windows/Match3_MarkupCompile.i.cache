@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\VLaD\Desktop\Match3\Match3\obj\Debug\net6.0-windows\
+C:\Users\VLaD\Desktop\Match3\match-3-WPF\Match3\obj\Debug\net6.0-windows\
 Match3
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
-C:\Users\VLaD\Desktop\Match3\Match3\App.xaml
+C:\Users\VLaD\Desktop\Match3\match-3-WPF\Match3\App.xaml
 11407045341
 
 18797406246
 195-708664333
 MainWindow.xaml;
 
-False
+True
 

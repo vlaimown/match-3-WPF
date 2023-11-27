@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Media.Animation;
 using System.Threading;
 using System.Security.Policy;
+using System.Xml.Linq;
 
 namespace Match3
 {
@@ -304,7 +305,7 @@ namespace Match3
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum - 1, colNum].Item.GetType())
                             FindMatch(rowNum, colNum, matchedItems2, -1, 0);
 
-                    if (colNum + directionX < field.GameField.GetLength(0))
+                    if (colNum + directionX < field.GameField.GetLength(0) && colNum + directionX >= 0)
                         if (selectedCell2.Item.GetType() == field.GameField[rowNum, colNum + directionX].Item.GetType())
                             FindMatch(rowNum, colNum, matchedItems3, 0, directionX);
                 }
@@ -405,28 +406,24 @@ namespace Match3
             {
                 int row = item.Cell.RowNum;
                 int col = item.Cell.ColNum;
-                for (int i = row; i >= 0; i--)
+                for (int i = row; i > 0; i--)
                 {
-                    txt.Text = "BBB";
                     //RandomDontMatchItem(i, col);
                     //Point point = SetPointCell(field.GameField[i, col]);
                     //RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
-                    if (i == 0)
-                    {
-                        RandomDontMatchItem(i, col);
-                        //if (willReturn)
-                        //    i = row;
-                    }
-
-                    //else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item != null)
+                    //if (i == 0)
                     //{
-                    //    field.GameField[i, col].Item = field.GameField[i - 1, col].Item;
-                    //    RootGrid.Children.Remove(field.GameField[i - 1, col].Item.Shape);
-                    //    field.GameField[i - 1, col].Item = null;
-                    //    txt.Text = "BBB";
-                    //    Point point = SetPointCell(field.GameField[i, col]);
-                    //    RootGrid.Children.Add(field.GameField[i, col].Item.Shape);
+                    //    RandomDontMatchItem(i, col);
+                    //    //if (willReturn)
+                    //    //    i = row;
                     //}
+
+                    if (field.GameField[i - 1, col].Item != null)
+                    {
+                        RootGrid.Children.Remove(field.GameField[i - 1, col].Item.Shape);
+                        Point point = SetPointCell(field.GameField[i, col]);
+                        SetCanvasPosition(field.GameField[i, col].Item.Shape, point.X, point.Y);
+                    }
 
                     //else if (field.GameField[i, col].Item == null && field.GameField[i - 1, col].Item == null)
                     //{
